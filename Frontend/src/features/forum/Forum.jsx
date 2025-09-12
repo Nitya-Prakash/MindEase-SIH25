@@ -25,7 +25,7 @@ export default function Forum() {
 
     setLoading(true);
     try {
-      const { data } = await api.post("/forum", newPost);
+      const { data } = await api.post("/api/forum", newPost);
       setPosts((prev) => [data, ...prev]);
       setNewPost({ title: "", content: "" });
       setShowCreateForm(false);

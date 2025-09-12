@@ -79,7 +79,7 @@ export default function Booking() {
       };
       
       console.log("Creating booking with payload:", payload);
-      const response = await api.post("/bookings", payload);
+      const response = await api.post("/api/bookings", payload);
       console.log("Booking creation response:", response.data);
       
       // Extract the booking from the response

@@ -37,7 +37,7 @@ export default function Resources() {
     setMessage("");
 
     try {
-      const { data } = await api.post("/resources", {
+      const { data } = await api.post("/api/resources", {
         title,
         fileUrl,
         description,

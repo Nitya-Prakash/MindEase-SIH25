@@ -61,7 +61,7 @@ export default function Screening() {
         responses,
       };
 
-      const { data } = await api.post("/screenings", payload);
+      const { data } = await api.post("/api/screenings", payload);
       setResult(data);
     } catch (err) {
       console.error("Screening submission error:", err);

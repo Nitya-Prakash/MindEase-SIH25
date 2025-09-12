@@ -67,7 +67,7 @@ export default function Chatbot() {
     setError(null);
 
     try {
-      const { data } = await api.post("/chatbot/chat", { message: messageText });
+      const { data } = await api.post("/api/chatbot/chat", { message: messageText });
       const botText = data.data.message;
 
       const botMsg = {
