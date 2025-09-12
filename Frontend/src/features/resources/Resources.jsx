@@ -58,7 +58,7 @@ export default function Resources() {
     if (!window.confirm("Are you sure you want to delete this resource?")) return;
 
     try {
-      await api.delete(`/resources/${id}`);
+      await api.delete(`/api/resources/${id}`);
       setResources((prev) => prev.filter((r) => r._id !== id));
       setMessage("Resource deleted successfully.");
       if (previewResource && previewResource._id === id) setPreviewResource(null);

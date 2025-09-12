@@ -53,7 +53,7 @@ export default function Profile() {
 
   const mutation = useMutation({
     mutationFn: async (updatedData) => {
-      const response = await api.put("/users/profile", updatedData);
+      const response = await api.put("/api/users/profile", updatedData);
       return response.data;
     },
     onSuccess: (responseData) => {

@@ -104,7 +104,7 @@ export default function Booking() {
 
   const handleStatusUpdate = async (bookingId, newStatus) => {
     try {
-      const response = await api.put(`/bookings/${bookingId}/status`, { status: newStatus });
+      const response = await api.put(`/api/bookings/${bookingId}/status`, { status: newStatus });
       const updatedBooking = response.data;
       
       // Update the booking in the state

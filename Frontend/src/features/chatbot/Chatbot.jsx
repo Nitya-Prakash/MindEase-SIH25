@@ -109,7 +109,7 @@ export default function Chatbot() {
 
   const handleClearChat = async () => {
     try {
-      await api.post("/chatbot/clear");
+      await api.post("/api/chatbot/clear");
       setMessages([
         {
           id: uuidv4(),
