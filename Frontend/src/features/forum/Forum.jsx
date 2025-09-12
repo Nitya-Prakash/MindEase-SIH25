@@ -38,7 +38,7 @@ export default function Forum() {
 
   const handleLike = async (postId) => {
     try {
-      const { data } = await api.post(`/forum/${postId}/like`);
+      const { data } = await api.post(`/api/forum/${postId}/like`);
       setPosts((prev) =>
         prev.map((post) => (post._id === postId ? data : post))
       );
@@ -51,7 +51,7 @@ export default function Forum() {
     if (!window.confirm("Are you sure you want to delete this post?")) return;
 
     try {
-      await api.delete(`/forum/${postId}`);
+      await api.delete(`/api/forum/${postId}`);
       setPosts((prev) => prev.filter((p) => p._id !== postId));
     } catch (err) {
       alert(err.response?.data?.message || "Failed to delete post");
@@ -147,7 +147,7 @@ function PostCard({ post, onLike, onDelete, onUpdate }) {
 
     setLoading(true);
     try {
-      const { data } = await api.post(`/forum/${post._id}/comment`, {
+      const { data } = await api.post(`/api/forum/${post._id}/comment`, {
         text: newComment,
       });
       onUpdate(data);
@@ -164,7 +164,7 @@ function PostCard({ post, onLike, onDelete, onUpdate }) {
 
     try {
       const { data } = await api.delete(
-        `/forum/${post._id}/comment/${commentId}`
+        `/api/forum/${post._id}/comment/${commentId}`
       );
       onUpdate(data);
     } catch (err) {
