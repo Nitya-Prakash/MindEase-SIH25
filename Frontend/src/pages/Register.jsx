@@ -39,7 +39,7 @@ export default function Register() {
 
     try {
       // No role or address sent here, backend defaults role to 'student'
-      await api.post("/auth/register", {
+      await api.post("/api/auth/register", {
         name: formData.name,
         email: formData.email,
         password: formData.password,
