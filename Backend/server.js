@@ -30,7 +30,7 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://mindease.vercel.app"],
+    origin: ["http://localhost:5173", "https://mindease-sih25.vercel.app/"],
     // your Vite frontend URL
     credentials: true,
   })
