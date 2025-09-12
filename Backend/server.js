@@ -27,13 +27,28 @@ console.log(
 
 const app = express();
 
-// Middleware
 const allowedOrigins = [
   "https://mindease-sih25.vercel.app",
   "http://localhost:5173",
 ];
 
+// CORS middleware with dynamic origin check
 app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
+// Explicitly handle OPTIONS preflight for all routes
+app.options(
+  "*",
   cors({
     origin: function (origin, callback) {
       if (!origin || allowedOrigins.indexOf(origin) !== -1) {
@@ -71,15 +86,15 @@ app.use("/api/forum", forumRoutes);
 app.use("/api/resources", resourceRoutes);
 app.use("/api/admin", adminRoutes);
 
+// Global error logger & handler for unexpected errors
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);
   res.status(500).json({ message: "Internal server error" });
 });
 
-// Error handling middleware (should be last)
+// Custom error handling middleware (should be last)
 app.use(errorHandler);
 
-// Start server
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
