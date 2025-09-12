@@ -10,7 +10,7 @@ export default function Forum() {
   useEffect(() => {
     async function fetchPosts() {
       try {
-        const { data } = await api.get("/forum");
+        const { data } = await api.get("/api/forum");
         setPosts(data);
       } catch (err) {
         console.error("Error fetching posts:", err);

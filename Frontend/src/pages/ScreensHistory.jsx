@@ -9,7 +9,7 @@ export default function ScreensHistory() {
   useEffect(() => {
     async function fetchHistory() {
       try {
-        const { data } = await api.get("/screenings");
+        const { data } = await api.get("/api/screenings");
         if (data.success) setHistory(data.screenings);
       } catch (err) {
         console.error("Fetch history error:", err);

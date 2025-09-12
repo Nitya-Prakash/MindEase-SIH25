@@ -20,7 +20,7 @@ export default function AdminScreeningAlerts() {
       setLoading(true);
       setError("");
       try {
-        const res = await api.get("/admin/screening-alerts", {
+        const res = await api.get("/api/admin/screening-alerts", {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         if (res.data.success) {

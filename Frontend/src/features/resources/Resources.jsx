@@ -21,7 +21,7 @@ export default function Resources() {
 
   useEffect(() => {
     api
-      .get("/resources")
+      .get("/api/resources")
       .then((res) => setResources(res.data))
       .catch((err) => console.error("Error fetching resources:", err));
   }, []);

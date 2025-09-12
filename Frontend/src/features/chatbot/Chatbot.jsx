@@ -13,7 +13,7 @@ export default function Chatbot() {
   useEffect(() => {
     async function fetchHistory() {
       try {
-        const { data } = await api.get("/chatbot/history");
+        const { data } = await api.get("/api/chatbot/history");
         let loadedMessages = [];
         if (data.success && data.history) {
           loadedMessages = data.history.map((msg) => ({

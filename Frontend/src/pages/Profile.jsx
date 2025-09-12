@@ -30,7 +30,7 @@ export default function Profile() {
   const { data: profileResponse, isLoading, isError, error: queryError } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
-      const response = await api.get("/users/profile");
+      const response = await api.get("/api/users/profile");
       return response.data;
     },
     onError: (error) => {

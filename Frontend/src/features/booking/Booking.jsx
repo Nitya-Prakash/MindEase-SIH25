@@ -16,7 +16,7 @@ export default function Booking() {
   useEffect(() => {
     async function fetchCounselors() {
       try {
-        const res = await api.get("/users/counselors");
+        const res = await api.get("/api/users/counselors");
         console.log("Counselors API response:", res.data);
         
         // Handle different response formats
@@ -41,7 +41,7 @@ export default function Booking() {
     async function fetchBookings() {
       try {
         setLoadingBookings(true);
-        const res = await api.get("/bookings");
+        const res = await api.get("/api/bookings");
         console.log("Bookings API response:", res.data);
         
         // Handle different response formats

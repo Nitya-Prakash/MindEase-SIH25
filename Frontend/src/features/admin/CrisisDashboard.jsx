@@ -12,7 +12,7 @@ export default function CrisisDashboard() {
       setLoading(true);
       setError("");
       try {
-        const res = await api.get("/admin/crises", {
+        const res = await api.get("/api/admin/crises", {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
         });
         setAlerts(res.data);
