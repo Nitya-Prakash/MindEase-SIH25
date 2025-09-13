@@ -1,77 +1,79 @@
 // controllers/chatbotController.js
-
 const axios = require("axios");
 const Conversation = require("../models/Conversation");
 
-// Groq Implementation
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
-// In-memory conversation storage for real-time context
+// In-memory conversation storage
 const conversations = new Map();
 
-// Call Groq API with conversation history
+// Call Groq API with retry + timeout
 async function callGroqAPI(message, userId = "anonymous") {
-  try {
-    console.log("🤖 Calling Groq API with model: llama-3.1-8b-instant");
-    console.log("📝 User message:", message);
+  let history = conversations.get(userId) || [];
 
-    // Retrieve or initialize in-memory history
-    let history = conversations.get(userId) || [];
+  if (history.length === 0) {
+    history.push({
+      role: "system",
+      content: `You are MindEase, a warm and empathetic mental health support assistant. 
+      Your goal is to provide only varied, personalized, and contextual mental health support.
+      If a user asks about topics outside mental health, respond briefly but always remind the user 
+      gently that your focus is mental health support and encourage returning to those topics.`,
+    });
+  }
 
-    if (history.length === 0) {
-      history.push({
-        role: "system",
-        content: `You are MindEase, a warm and empathetic mental health support assistant. Your goal is to provide only varied, personalized, and contextual mental health support.
-    If a user asks about topics outside mental health, respond briefly but always remind the user gently that your focus is mental health support and encourage returning to those topics.`,
-      });
-    }
+  history.push({ role: "user", content: message });
 
-    history.push({ role: "user", content: message });
+  // Keep only last 8 exchanges + system prompt
+  if (history.length > 17) {
+    history = [history[0], ...history.slice(-16)];
+  }
 
-    // Trim to last 8 exchanges + system prompt
-    if (history.length > 17) {
-      history = [history[0], ...history.slice(-16)];
-    }
+  conversations.set(userId, history);
 
-    console.log("🧠 Conversation history length:", history.length - 1);
-
-    const response = await axios.post(
-      GROQ_API_URL,
-      {
-        model: "llama-3.1-8b-instant",
-        messages: history,
-        max_tokens: 400,
-        temperature: 0.9,
-        top_p: 0.9,
-        frequency_penalty: 0.3,
-        presence_penalty: 0.2,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${GROQ_API_KEY}`,
-          "Content-Type": "application/json",
+  let attempt = 0;
+  while (attempt < 2) {
+    try {
+      const response = await axios.post(
+        GROQ_API_URL,
+        {
+          model: "llama-3.1-8b-instant",
+          messages: history,
+          max_tokens: 200, // shorter response for speed
+          temperature: 0.9,
+          top_p: 0.9,
+          frequency_penalty: 0.3,
+          presence_penalty: 0.2,
         },
+        {
+          headers: {
+            Authorization: `Bearer ${GROQ_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          timeout: 15000, // 15s timeout
+        }
+      );
+
+      const botReply = response.data.choices[0].message.content;
+      history.push({ role: "assistant", content: botReply });
+      conversations.set(userId, history);
+
+      return botReply;
+    } catch (err) {
+      attempt++;
+      console.error(
+        `❌ Groq API error (attempt ${attempt}):`,
+        err.response?.data || err.message
+      );
+
+      if (attempt >= 2) {
+        return "⚠️ I'm having trouble responding right now. Please try again.";
       }
-    );
-
-    const botReply = response.data.choices[0].message.content;
-    console.log("🤖 Bot response:", botReply.substring(0, 100) + "...");
-
-    // Update in-memory history
-    history.push({ role: "assistant", content: botReply });
-    conversations.set(userId, history);
-
-    console.log("✅ Groq API call successful");
-    return botReply;
-  } catch (error) {
-    console.error("❌ Groq API Error:", error.response?.data || error.message);
-    return "I'm having trouble connecting right now. Could you try again?";
+    }
   }
 }
 
 // Main chatbot controller
-// controllers/chatbotController.js
 async function chatWithBot(req, res) {
   try {
     const { message } = req.body;
@@ -88,16 +90,38 @@ async function chatWithBot(req, res) {
 
     console.log(`💬 Chat from ${userId}: "${message}"`);
 
-    // Get bot response
+    // Get AI response
     const botResponse = await callGroqAPI(message, userId);
 
-    // ⚡ Send response to frontend immediately (non-blocking)
+    // Load or create conversation document in MongoDB
+    let convoDoc = await Conversation.findOne({ user: req.user?._id });
+    if (!convoDoc) {
+      convoDoc = new Conversation({
+        user: req.user?._id || null,
+        messages: [],
+      });
+    }
+
+    // Append messages
+    convoDoc.messages.push({ sender: "user", text: message });
+    convoDoc.messages.push({ sender: "bot", text: botResponse });
+
+    // Crisis flag
+    if (req.crisisDetected) {
+      convoDoc.crisisAlert = true;
+      convoDoc.crisisReason = req.crisisReason;
+    }
+
+    await convoDoc.save();
+
+    // Response payload
     const responseData = {
       success: true,
       data: {
         message: botResponse,
         timestamp: new Date().toISOString(),
         isAuthenticated,
+        conversationId: convoDoc._id.toString(),
       },
     };
 
@@ -110,33 +134,7 @@ async function chatWithBot(req, res) {
       };
     }
 
-    res.json(responseData); // 🚀 Send reply to user first
-
-    // ⬇️ Save conversation in background (won’t block the response)
-    (async () => {
-      try {
-        let convoDoc = await Conversation.findOne({ user: req.user?._id });
-        if (!convoDoc) {
-          convoDoc = new Conversation({
-            user: req.user?._id || null,
-            messages: [],
-          });
-        }
-
-        convoDoc.messages.push({ sender: "user", text: message });
-        convoDoc.messages.push({ sender: "bot", text: botResponse });
-
-        if (req.crisisDetected) {
-          convoDoc.crisisAlert = true;
-          convoDoc.crisisReason = req.crisisReason;
-        }
-
-        await convoDoc.save();
-        console.log("💾 Conversation saved successfully");
-      } catch (err) {
-        console.error("❌ Failed to save conversation:", err);
-      }
-    })();
+    return res.json(responseData);
   } catch (error) {
     console.error("❌ Chatbot controller error:", error);
     return res.status(500).json({
@@ -147,7 +145,7 @@ async function chatWithBot(req, res) {
   }
 }
 
-// Clear conversation endpoint
+// Clear conversation
 async function clearConversation(req, res) {
   try {
     const userId =
@@ -157,7 +155,6 @@ async function clearConversation(req, res) {
     conversations.delete(userId);
     await Conversation.deleteOne({ user: req.user?._id });
 
-    console.log(`🗑️ Cleared conversation for ${userId}`);
     return res.json({ success: true, message: "Conversation cleared." });
   } catch (error) {
     console.error("❌ Failed to clear conversation:", error);
@@ -167,7 +164,7 @@ async function clearConversation(req, res) {
   }
 }
 
-// Get conversation history endpoint
+// Get conversation history
 async function getConversationHistory(req, res) {
   try {
     const convoDoc = await Conversation.findOne({ user: req.user?._id });
