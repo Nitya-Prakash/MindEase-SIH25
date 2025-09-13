@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../services/api";
+import { register, login } from "../services/authService";
+
 
 export default function Login() {
   const [formData, setFormData] = useState({

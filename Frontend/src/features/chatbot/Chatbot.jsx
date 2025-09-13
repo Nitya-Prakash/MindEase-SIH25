@@ -128,7 +128,7 @@ export default function Chatbot() {
       {/* Header */}
       <div className="bg-indigo-700 text-white p-5 flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-semibold">MindMate Chat</h2>
+          <h2 className="text-3xl font-semibold">MindEase Chat</h2>
           <p className="text-indigo-200 mt-1 select-none">Here to listen & support you 24/7</p>
         </div>
         <button
