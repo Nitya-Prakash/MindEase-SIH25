@@ -189,7 +189,7 @@ export default function Chatbot() {
         <button
           onClick={sendMessage}
           disabled={loading || !input.trim()}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-6 py-3 rounded-lg shadow-md transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-indigo-600 cursor-pointer hover:bg-indigo-700 text-white font-medium px-6 py-3 rounded-lg shadow-md transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Send message"
         >
           {loading ? "..." : "Send"}

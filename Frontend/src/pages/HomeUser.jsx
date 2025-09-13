@@ -176,7 +176,7 @@ export default function HomeUser() {
                     key={action.route}
                     onClick={() => navigate(action.route)}
                     className={`
-                      group relative overflow-hidden rounded-full px-6 py-3 font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-xl
+                      group relative overflow-hidden rounded-full px-6 py-3 font-semibold transition-all cursor-pointer duration-300 transform hover:scale-105 hover:shadow-xl
                       ${action.primary ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg" : "bg-white/80 backdrop-blur-sm text-gray-700 shadow-md border border-white/50 hover:bg-white"}
                     `}
                     style={{ animationDelay: `${index * 100}ms` }}
@@ -465,7 +465,7 @@ export default function HomeUser() {
                 <h3 className="text-xl font-bold text-white mb-3">Emergency Helpline</h3>
                 <p className="text-white/70 mb-4">Available 24/7 for crisis support</p>
                 <a href="tel:+919999999999" className="inline-flex items-center gap-2 text-white font-semibold hover:text-pink-300 transition-colors">
-                  <span className="text-lg">+91 99999 99999</span>
+                  <span className="text-lg">+91 18005990019</span>
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"/>
                   </svg>
@@ -485,7 +485,7 @@ export default function HomeUser() {
                 <h3 className="text-xl font-bold text-white mb-3">Email Support</h3>
                 <p className="text-white/70 mb-4">Get detailed help via email</p>
                 <a href="mailto:support@mentalhealthsih.com" className="inline-flex items-center gap-2 text-white font-semibold hover:text-blue-300 transition-colors">
-                  <span>support@mentalhealthsih.com</span>
+                  <span>distressmailsconnecting@gmail.com</span>
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"/>
                   </svg>
@@ -505,7 +505,7 @@ export default function HomeUser() {
                 <p className="text-white/70 mb-4">Instant support through chat</p>
                 <button 
                   onClick={() => navigate('/chatbot')}
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold px-6 py-2 rounded-full transition-all duration-300 hover:shadow-lg hover:scale-105"
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 cursor-pointer to-teal-600 text-white font-semibold px-6 py-2 rounded-full transition-all duration-300 hover:shadow-lg hover:scale-105"
                 >
                   <span>Start Chat</span>
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">

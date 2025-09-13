@@ -5,6 +5,7 @@ export default function Resources() {
   const [resources, setResources] = useState([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true); // For data fetching state
 
   // Form state for admin inputs
   const [title, setTitle] = useState("");
@@ -20,10 +21,12 @@ export default function Resources() {
   const [previewResource, setPreviewResource] = React.useState(null);
 
   useEffect(() => {
+    setFetching(true);
     api
       .get("/api/resources")
       .then((res) => setResources(res.data))
-      .catch((err) => console.error("Error fetching resources:", err));
+      .catch((err) => console.error("Error fetching resources:", err))
+      .finally(() => setFetching(false));
   }, []);
 
   const handleSubmit = async (e) => {
@@ -113,7 +116,7 @@ export default function Resources() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full sm:w-auto bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm sm:text-base"
+            className="w-full sm:w-auto bg-green-600 text-white cursor-pointer px-4 py-2 rounded hover:bg-green-700 text-sm sm:text-base"
           >
             {loading ? "Adding..." : "Add Resource"}
           </button>
@@ -121,13 +124,13 @@ export default function Resources() {
       )}
 
       {/* Resources Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {resources.length === 0 ? (
-          <p className="text-gray-500 col-span-full text-center">
-            No resources available.
-          </p>
-        ) : (
-          resources.map((resource) => (
+      {fetching ? (
+        <p className="text-center text-gray-500 text-sm sm:text-base">Loading...</p>
+      ) : resources.length === 0 ? (
+        <p className="text-center text-gray-500 text-sm sm:text-base">No resources available.</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {resources.map((resource) => (
             <div
               key={resource._id}
               onClick={() => openPreview(resource)}
@@ -199,9 +202,9 @@ export default function Resources() {
                 )}
               </div>
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Preview Modal */}
       {previewResource && (

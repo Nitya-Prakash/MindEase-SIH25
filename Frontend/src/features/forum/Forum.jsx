@@ -5,15 +5,19 @@ export default function Forum() {
   const [posts, setPosts] = useState([]);
   const [newPost, setNewPost] = useState({ title: "", content: "" });
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true); // For initial fetch
   const [showCreateForm, setShowCreateForm] = useState(false);
 
   useEffect(() => {
     async function fetchPosts() {
+      setFetching(true);
       try {
         const { data } = await api.get("/api/forum");
         setPosts(data);
       } catch (err) {
         console.error("Error fetching posts:", err);
+      } finally {
+        setFetching(false);
       }
     }
     fetchPosts();
@@ -109,28 +113,32 @@ export default function Forum() {
         </div>
       )}
 
-      {/* Posts */}
-      <div className="space-y-5">
-        {posts.length === 0 && (
-          <div className="text-center py-10 bg-gray-50 rounded-md border">
-            <p className="text-gray-500">No posts yet. Be the first to share!</p>
-          </div>
-        )}
-
-        {posts.map((post) => (
-          <PostCard
-            key={post._id}
-            post={post}
-            onLike={handleLike}
-            onDelete={handleDeletePost}
-            onUpdate={(updatedPost) =>
-              setPosts((prev) =>
-                prev.map((p) => (p._id === updatedPost._id ? updatedPost : p))
-              )
-            }
-          />
-        ))}
-      </div>
+      {/* Loading / Posts */}
+      {fetching ? (
+        <p className="text-center text-gray-500 text-sm sm:text-base py-10">
+          Loading...
+        </p>
+      ) : posts.length === 0 ? (
+        <div className="text-center py-10 bg-gray-50 rounded-md border">
+          <p className="text-gray-500">No posts yet. Be the first to share!</p>
+        </div>
+      ) : (
+        <div className="space-y-5">
+          {posts.map((post) => (
+            <PostCard
+              key={post._id}
+              post={post}
+              onLike={handleLike}
+              onDelete={handleDeletePost}
+              onUpdate={(updatedPost) =>
+                setPosts((prev) =>
+                  prev.map((p) => (p._id === updatedPost._id ? updatedPost : p))
+                )
+              }
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

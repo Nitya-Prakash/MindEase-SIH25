@@ -75,7 +75,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full text-white font-semibold p-3 rounded-lg transition ${
+            className={`w-full text-white cursor-pointer font-semibold p-3 rounded-lg transition ${
               loading
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-pink-600 hover:bg-pink-700"

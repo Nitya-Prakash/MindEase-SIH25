@@ -16,6 +16,7 @@ import CrisisDashboard from "./features/admin/CrisisDashboard";
 import AdminRoute from "./components/AdminRoute";
 import ScreensHistory from "./pages/ScreensHistory";
 import AdminScreeningAlerts from "./features/admin/AdminScreeningAlerts";
+import About from "./pages/About";
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -55,6 +56,7 @@ export default function App() {
               <Route path="/" element={<RoleHomeRedirect />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/about" element={<About />} />
               
               {/* Profile routes - both view and edit use the same component */}
               <Route path="/profile" element={<Profile />} />

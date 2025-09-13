@@ -178,7 +178,7 @@ export default function Booking() {
           <button
             type="submit"
             disabled={loading || counselors.length === 0}
-            className={`w-full p-3 rounded text-white font-semibold transition ${
+            className={`w-full p-3 rounded text-white cursor-pointer font-semibold transition ${
               loading || counselors.length === 0
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-blue-600 hover:bg-blue-700"

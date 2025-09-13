@@ -255,7 +255,7 @@ export default function Screening() {
           <button
             onClick={prevStep}
             disabled={step === 0}
-            className={`px-6 py-3 rounded-lg font-medium transition ${
+            className={`px-6 py-3 rounded-lg cursor-pointer font-medium transition ${
               step === 0
                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                 : "bg-gray-300 text-gray-700 hover:bg-gray-400"
@@ -267,7 +267,7 @@ export default function Screening() {
           <button
             onClick={nextStep}
             disabled={answers[step] == null || loading}
-            className={`px-6 py-3 rounded-lg font-medium transition ${
+            className={`px-6 py-3 rounded-lg cursor-pointer font-medium transition ${
               answers[step] == null || loading
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                 : "bg-indigo-600 text-white hover:bg-indigo-700"

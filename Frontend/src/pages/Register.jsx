@@ -114,7 +114,7 @@ export default function Register() {
           <input
             type="text"
             name="phone"
-            placeholder="Phone number"
+            placeholder="Enter a valid 10 digit phone number"
             value={formData.phone}
             onChange={handleChange}
             className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
@@ -144,7 +144,7 @@ export default function Register() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full text-white font-semibold p-3 rounded-lg transition ${
+            className={`w-full text-white font-semibold p-3 cursor-pointer rounded-lg transition ${
               loading
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-indigo-600 hover:bg-indigo-700"
