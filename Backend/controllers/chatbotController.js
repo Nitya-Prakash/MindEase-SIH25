@@ -71,6 +71,7 @@ async function callGroqAPI(message, userId = "anonymous") {
 }
 
 // Main chatbot controller
+// controllers/chatbotController.js
 async function chatWithBot(req, res) {
   try {
     const { message } = req.body;
@@ -87,38 +88,16 @@ async function chatWithBot(req, res) {
 
     console.log(`💬 Chat from ${userId}: "${message}"`);
 
-    // Get response from IA
+    // Get bot response
     const botResponse = await callGroqAPI(message, userId);
 
-    // Load or create MongoDB conversation document
-    let convoDoc = await Conversation.findOne({ user: req.user?._id });
-    if (!convoDoc) {
-      convoDoc = new Conversation({
-        user: req.user?._id || null,
-        messages: [],
-      });
-    }
-
-    // Append messages
-    convoDoc.messages.push({ sender: "user", text: message });
-    convoDoc.messages.push({ sender: "bot", text: botResponse });
-
-    // Persist crisis flag
-    if (req.crisisDetected) {
-      convoDoc.crisisAlert = true;
-      convoDoc.crisisReason = req.crisisReason;
-    }
-
-    await convoDoc.save();
-
-    // Build response payload
+    // ⚡ Send response to frontend immediately (non-blocking)
     const responseData = {
       success: true,
       data: {
         message: botResponse,
         timestamp: new Date().toISOString(),
         isAuthenticated,
-        conversationId: convoDoc._id.toString(),
       },
     };
 
@@ -131,8 +110,33 @@ async function chatWithBot(req, res) {
       };
     }
 
-    console.log(`✅ Response sent (${botResponse.length} chars)`);
-    return res.json(responseData);
+    res.json(responseData); // 🚀 Send reply to user first
+
+    // ⬇️ Save conversation in background (won’t block the response)
+    (async () => {
+      try {
+        let convoDoc = await Conversation.findOne({ user: req.user?._id });
+        if (!convoDoc) {
+          convoDoc = new Conversation({
+            user: req.user?._id || null,
+            messages: [],
+          });
+        }
+
+        convoDoc.messages.push({ sender: "user", text: message });
+        convoDoc.messages.push({ sender: "bot", text: botResponse });
+
+        if (req.crisisDetected) {
+          convoDoc.crisisAlert = true;
+          convoDoc.crisisReason = req.crisisReason;
+        }
+
+        await convoDoc.save();
+        console.log("💾 Conversation saved successfully");
+      } catch (err) {
+        console.error("❌ Failed to save conversation:", err);
+      }
+    })();
   } catch (error) {
     console.error("❌ Chatbot controller error:", error);
     return res.status(500).json({
